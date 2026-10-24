@@ -57,6 +57,22 @@ source device, injects a key press/release into it, and reports what the
 sudo ./build/keys-remap-verify pmic_resin
 ```
 
+## Publishing to the PPA
+
+`publish.sh` builds one signed source package per Ubuntu series inside an
+Ubuntu 26.04 Podman container and uploads them to `ppa:lightofmysoul/gxr`.
+The host only needs Podman, Git and GnuPG with the signing key.
+
+```sh
+./publish.sh --no-upload    # build, sign and validate only
+./publish.sh                # build, sign, validate and dput
+./publish.sh --unsigned     # no key needed; sign later with debsign
+```
+
+For a new upload, add a `debian/changelog` entry (bump the upstream version
+or the `+gxrN` component) and commit it; normal uploads refuse a dirty tree.
+See `./publish.sh --help` and `debian/README.source`.
+
 ## License
 
 MIT
