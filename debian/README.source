@@ -1,0 +1,12 @@
+gxr-key-remap is maintained as a native package because the daemons and their
+Ubuntu service integration are released from the same repository.
+
+Launchpad versions must be unique. For subsequent PPA uploads, add a changelog
+entry and increment the +gxrN component. The changelog targets resolute with a
+~26.04.N suffix; publish.sh reuses that entry for every other supported series
+with its own ~XX.XX.N suffix.
+
+Publishing is performed in an Ubuntu 26.04 Podman container, so Debian package
+tools do not need to be installed on the host. Use ./publish.sh --no-upload for
+a signed dry run and ./publish.sh to build, validate, sign, and upload the
+source packages. The host needs Podman, Git, and GnuPG.

@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+
+test -x /usr/bin/keys-remap
+test -x /usr/bin/touchkey-remap
+test -f /usr/lib/systemd/system/keys-remap.service
+test -f /usr/lib/systemd/system/touchkey-remap.service
+
+touchkey-remap --self-test
+
+systemd-analyze --man=no verify \
+    /usr/lib/systemd/system/keys-remap.service \
+    /usr/lib/systemd/system/touchkey-remap.service

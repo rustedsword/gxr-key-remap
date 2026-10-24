@@ -1,0 +1,5 @@
+tar-ignore = .git
+tar-ignore = build
+tar-ignore = build-*
+tar-ignore = build-packages
+tar-ignore = obj-*

@@ -1,0 +1,29 @@
+Source: gxr-key-remap
+Section: utils
+Priority: optional
+Maintainer: Stanislav Aleksandrov <lightofmysoul@gmail.com>
+Build-Depends:
+ cmake,
+ debhelper-compat (= 13),
+ linux-libc-dev,
+Standards-Version: 4.7.4.1
+Rules-Requires-Root: no
+Homepage: https://github.com/rustedsword/gxr-key-remap
+Vcs-Git: https://github.com/rustedsword/gxr-key-remap.git
+Vcs-Browser: https://github.com/rustedsword/gxr-key-remap
+
+Package: gxr-key-remap
+Architecture: arm64
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+Description: remap Galaxy XR hardware buttons to mouse buttons
+ Two small evdev/uinput daemons that grab the headset's hardware inputs and
+ re-emit them through virtual mouse devices:
+ .
+  * keys-remap: power button to left click, volume down to F13, volume up
+    to right click.
+  * touchkey-remap: sec_touchkey touch held to left button held.
+ .
+ It targets the Samsung Galaxy XR platform running Ubuntu on its Android
+ vendor kernel.

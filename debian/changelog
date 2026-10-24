@@ -1,0 +1,6 @@
+gxr-key-remap (1.0.0+gxr1~26.04.1) resolute; urgency=medium
+
+  * Initial package of keys-remap and touchkey-remap with their systemd
+    services.
+
+ -- Stanislav Aleksandrov <lightofmysoul@gmail.com>  Sat, 24 Oct 2026 13:20:20 +0000

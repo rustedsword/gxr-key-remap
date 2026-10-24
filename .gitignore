@@ -1,2 +1,11 @@
 /build/
 *.swp
+/build-packages/
+/obj-*/
+/debian/.debhelper/
+/debian/debhelper-build-stamp
+/debian/files
+/debian/*.debhelper
+/debian/*.substvars
+/debian/gxr-key-remap/
+*~
