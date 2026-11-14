@@ -13,6 +13,7 @@
 #ifndef SOURCE_NAME
 #define SOURCE_NAME "sec_touchkey"
 #endif
+#define MAINLINE_SOURCE_NAME "ABOV A96T396 Touch Slider"
 #ifndef OUT_NAME
 #define OUT_NAME "remapped-touchkey"
 #endif
@@ -103,8 +104,11 @@ static int open_source(void)
                     continue;
 
                 (void)ioctl(fd, EVIOCGNAME(sizeof(name)), name);
-                if (strcmp(name, SOURCE_NAME) == 0 &&
+                if ((strcmp(name, SOURCE_NAME) == 0 ||
+                     strcmp(name, MAINLINE_SOURCE_NAME) == 0) &&
                     ioctl(fd, EVIOCGRAB, 1) == 0) {
+                    fprintf(stderr, "touchkey-remap: using %s (%s)\n",
+                            name, path);
                     closedir(dir);
                     return fd;
                 }
@@ -165,7 +169,8 @@ static int run_service(void)
 
     src = open_source();
     if (src < 0) {
-        fprintf(stderr, "touchkey-remap: %s not found\n", SOURCE_NAME);
+        fprintf(stderr, "touchkey-remap: %s or %s not found\n",
+                SOURCE_NAME, MAINLINE_SOURCE_NAME);
         return 1;
     }
 

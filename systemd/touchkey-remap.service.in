@@ -1,5 +1,5 @@
 [Unit]
-Description=Remap sec_touchkey touch directly to held left mouse button
+Description=Remap Galaxy XR touch directly to held left mouse button
 After=systemd-udevd.service
 
 [Service]

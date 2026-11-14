@@ -23,7 +23,7 @@ Description: remap Galaxy XR hardware buttons to mouse buttons
  .
   * keys-remap: power button to left click, volume down to F13, volume up
     to right click.
-  * touchkey-remap: sec_touchkey touch held to left button held.
+  * touchkey-remap: touch held to left button held.
  .
- It targets the Samsung Galaxy XR platform running Ubuntu on its Android
- vendor kernel.
+ It targets the Samsung Galaxy XR platform running Ubuntu on the Android
+ vendor kernel or mainline Linux.

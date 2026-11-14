@@ -9,10 +9,14 @@
 #include <linux/input.h>
 #include <linux/uinput.h>
 
-static const struct { const char *name; unsigned short btn; } MAP[] = {
-    { "pmic_pwrkey", BTN_LEFT   },  /* power button -> left click   */
-    { "pmic_resin",  KEY_F13    },  /* volume down  -> F13 key      */
-    { "gpio_keys",   BTN_RIGHT  },  /* volume up    -> right click  */
+static const struct {
+    const char *name;
+    const char *alias;
+    unsigned short btn;
+} MAP[] = {
+    { "pmic_pwrkey", NULL,        BTN_LEFT  },  /* power button -> left click  */
+    { "pmic_resin",  NULL,        KEY_F13   },  /* volume down  -> F13 key     */
+    { "gpio_keys",   "gpio-keys", BTN_RIGHT },  /* volume up    -> right click */
 };
 enum { NMAP = sizeof(MAP) / sizeof(MAP[0]) };
 
@@ -22,6 +26,7 @@ int main(void) {
     int n = 0;
 
     for (int attempt = 0; attempt < 20 && n < NMAP; attempt++) {
+        int found[NMAP] = { 0 };
         for (int i = 0; i < n; i++) close(pfd[i].fd);
         n = 0;
         DIR *dir = opendir("/dev/input");
@@ -35,9 +40,15 @@ int main(void) {
                 char name[256] = "";
                 ioctl(fd, EVIOCGNAME(sizeof name), name);
                 int m = -1;
-                for (int i = 0; i < NMAP; i++)
-                    if (!strcmp(name, MAP[i].name)) { m = i; break; }
-                if (m < 0 || ioctl(fd, EVIOCGRAB, 1) < 0) { close(fd); continue; }
+                for (int i = 0; i < NMAP; i++) {
+                    if (!strcmp(name, MAP[i].name) ||
+                        (MAP[i].alias && !strcmp(name, MAP[i].alias))) {
+                        m = i;
+                        break;
+                    }
+                }
+                if (m < 0 || found[m] || ioctl(fd, EVIOCGRAB, 1) < 0) { close(fd); continue; }
+                found[m] = 1;
                 pfd[n].fd = fd; pfd[n].events = POLLIN; btn[n] = MAP[m].btn; n++;
             }
             closedir(dir);

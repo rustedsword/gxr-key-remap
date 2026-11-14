@@ -2,11 +2,21 @@ gxr-key-remap is maintained as a native package because the daemons and their
 Ubuntu service integration are released from the same repository.
 
 Launchpad versions must be unique. For subsequent PPA uploads, add a changelog
-entry and increment the +gxrN component. The changelog targets resolute with a
-~26.04.N suffix; publish.sh reuses that entry for every other supported series
-with its own ~XX.XX.N suffix.
+entry and increment the +gxrN component. The changelog version uses a
+~YY.MM.N suffix for its target series; packaging/publish.sh reuses that entry
+for every selected series with the matching Ubuntu version suffix.
 
-Publishing is performed in an Ubuntu 26.04 Podman container, so Debian package
-tools do not need to be installed on the host. Use ./publish.sh --no-upload for
-a signed dry run and ./publish.sh to build, validate, sign, and upload the
-source packages. The host needs Podman, Git, and GnuPG.
+Publishing uses a Podman image of each selected Ubuntu series, defaulting to
+stonking. Use --series resolute to select resolute; --series is repeatable.
+The image installs the build dependencies from debian/control and is rebuilt
+when that file or packaging/Containerfile changes.
+
+Use ./packaging/publish.sh --no-upload for a signed dry run. Add --test-build
+to build arm64 binaries from the extracted source package before uploading.
+The build cross-compiles on amd64 and runs natively on arm64. Runtime tests
+are skipped when cross-compiling. The host needs Podman, Git, and GnuPG;
+--unsigned skips signing and implies --no-upload.
+
+Clean builds archive HEAD, excluding packaging/. To validate local changes,
+use --allow-dirty with --no-upload or --unsigned. Source artifacts and any
+test-built binary packages are retained in build/publish/.

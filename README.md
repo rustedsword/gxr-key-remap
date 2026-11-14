@@ -1,19 +1,28 @@
 # gxr-key-remap
 
-Small evdev/uinput daemons that turn a phone's hardware buttons into mouse
-buttons on a Linux desktop session.
+Small evdev/uinput daemons that turn a Galaxy XR headset's hardware buttons
+into mouse buttons on a Linux desktop session.
 
-| Daemon           | Source device  | Output                        |
-|------------------|----------------|-------------------------------|
-| `keys-remap`     | `pmic_pwrkey`  | power button → left click     |
-|                  | `pmic_resin`   | volume down → `F13`           |
-|                  | `gpio_keys`    | volume up → right click       |
-| `touchkey-remap` | `sec_touchkey` | touch held → left button held |
+| Daemon          | Source device                 | Output                        |
+|-----------------|-------------------------------|-------------------------------|
+| `keys-remap`     | `pmic_pwrkey`                  | power button → left click     |
+|                 | `pmic_resin`                   | volume down → `F13`           |
+|                 | `gpio_keys` / `gpio-keys`      | volume up → right click       |
+| `touchkey-remap` | `sec_touchkey`                | touch held → left button held |
+|                 | `ABOV A96T396 Touch Slider`    | touch held → left button held |
 
 Each daemon grabs its source device(s) exclusively (`EVIOCGRAB`) and
 re-emits events through a virtual uinput device (`remapped-buttons`,
 `remapped-touchkey`). The virtual devices declare relative axes so
 udev/libinput treat them as mice.
+
+Devices are discovered by their evdev names under `/dev/input`, independently
+of event numbers or sysfs paths. Both the vendor 5.10 name `gpio_keys` and the
+7.4 name `gpio-keys` are supported. The touch remapper accepts the vendor
+`sec_touchkey` device and the mainline `ABOV A96T396 Touch Slider`. Both use
+`BTN_TOUCH` for press/release; slider position events are ignored, so sliding
+keeps the left button held. Both daemons require `/dev/uinput`
+(`CONFIG_INPUT_UINPUT=y`, or `=m` with the module loaded).
 
 ## Build
 
@@ -59,19 +68,31 @@ sudo ./build/keys-remap-verify pmic_resin
 
 ## Publishing to the PPA
 
-`publish.sh` builds one signed source package per Ubuntu series inside an
-Ubuntu 26.04 Podman container and uploads them to `ppa:lightofmysoul/gxr`.
-The host only needs Podman, Git and GnuPG with the signing key.
+`packaging/publish.sh` builds a signed source package inside a Podman
+container for the selected Ubuntu series and uploads it to
+`ppa:lightofmysoul/gxr`. It defaults to Stonking; use `--series resolute`
+or repeat `--series` to select multiple series. The host needs Podman, Git
+and GnuPG with the signing key (unless using `--unsigned`).
 
 ```sh
-./publish.sh --no-upload    # build, sign and validate only
-./publish.sh                # build, sign, validate and dput
-./publish.sh --unsigned     # no key needed; sign later with debsign
+./packaging/publish.sh --no-upload               # build, sign and check
+./packaging/publish.sh                           # build, sign, check and upload
+./packaging/publish.sh --test-build              # build arm64 packages before upload
+./packaging/publish.sh --unsigned --test-build --allow-dirty  # check local changes
 ```
+
+`--test-build` builds arm64 binaries from the extracted source package,
+cross-compiling on an amd64 host or building natively on arm64. Runtime tests
+run on native builds and are skipped when cross-compiling. Each series has
+its own builder image, rebuilt when `packaging/Containerfile` or
+`debian/control` changes. Artifacts are retained in `build/publish/`.
 
 For a new upload, add a `debian/changelog` entry (bump the upstream version
 or the `+gxrN` component) and commit it; normal uploads refuse a dirty tree.
-See `./publish.sh --help` and `debian/README.source`.
+Clean builds use the committed tree; `--allow-dirty` uses local changes and
+requires `--no-upload` or `--unsigned`. The `packaging/` directory is excluded
+from source packages. See `./packaging/publish.sh --help` and
+`debian/README.source`.
 
 ## License
 

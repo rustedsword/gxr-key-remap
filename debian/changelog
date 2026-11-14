@@ -1,3 +1,14 @@
+gxr-key-remap (1.0.0+gxr2~26.10.1) stonking; urgency=medium
+
+  * Recognize the mainline ABOV A96T396 Touch Slider alongside the vendor
+    sec_touchkey device, preserving touch-to-left-button remapping.
+  * Accept both gpio_keys (vendor 5.10) and gpio-keys (7.4) input device
+    names, and count each button source only once during discovery.
+  * Move publishing scripts under packaging/, use an image per Ubuntu
+    series, and add arm64 test builds from the generated source packages.
+
+ -- Stanislav Aleksandrov <lightofmysoul@gmail.com>  Fri, 13 Nov 2026 19:25:20 +0000
+
 gxr-key-remap (1.0.0+gxr1~26.04.1) resolute; urgency=medium
 
   * Initial package of keys-remap and touchkey-remap with their systemd
